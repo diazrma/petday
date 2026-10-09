@@ -1,0 +1,25 @@
+# Gerado pelo Canteiro. Subir: docker compose up -d --build   ·   Parar: docker compose down
+services:
+  pet-day:
+    build: .
+    image: canteiro/pet-day:local
+    ports:
+      - "127.0.0.1:3107:80"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - APP_ENV=local
+      - APP_URL=http://localhost:3107
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/database/docker/database.sqlite
+      - LOG_CHANNEL=stderr
+    volumes:
+      - pet-day-storage:/var/www/html/storage
+      - pet-day-db:/var/www/html/database/docker
+      - ./database:/seed:ro
+    restart: "no"
+
+volumes:
+  pet-day-storage:
+  pet-day-db:

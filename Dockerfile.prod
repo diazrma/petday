@@ -1,0 +1,42 @@
+# Produção: igual ao Dockerfile, mas com Node + @huggingface/transformers na imagem final
+# para a checagem de pet por IA (scripts/detect-pet.mjs) funcionar dentro do container.
+FROM node:22-alpine AS assets
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Dependências de runtime do Node (glibc, igual à imagem final; onnxruntime/sharp têm binários nativos)
+FROM node:22-bookworm-slim AS node_runtime
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --omit=dev
+# Baixa o modelo CLIP (q8, ~150 MB) no build: o repositório não versiona o modelo e o Render não tem disco persistente
+RUN node -e "import('@huggingface/transformers').then(async ({ pipeline, env }) => { env.cacheDir = '/app/ai-models'; await pipeline('zero-shot-image-classification', 'Xenova/clip-vit-base-patch32', { dtype: 'q8' }); console.log('modelo ok'); })"
+
+FROM composer:2 AS vendor
+WORKDIR /app
+COPY composer.json composer.lock* ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction --ignore-platform-reqs
+COPY . .
+RUN composer dump-autoload --optimize --no-dev --no-scripts
+
+FROM php:8.3-apache
+COPY --from=mlocati/php-extension-installer:2 /usr/bin/install-php-extensions /usr/local/bin/
+COPY --from=node_runtime /usr/local/bin/node /usr/local/bin/node
+RUN install-php-extensions intl zip bcmath gd exif opcache pdo_sqlite pdo_pgsql \
+ && a2enmod rewrite \
+ && sed -ri 's#/var/www/html#/var/www/html/public#g' /etc/apache2/sites-available/*.conf \
+ && sed -ri 's#AllowOverride None#AllowOverride All#g' /etc/apache2/apache2.conf \
+ && { echo 'upload_max_filesize=20M'; echo 'post_max_size=25M'; echo 'memory_limit=256M'; } > /usr/local/etc/php/conf.d/petday.ini
+WORKDIR /var/www/html
+COPY --from=vendor /app ./
+COPY --from=node_runtime /app/node_modules ./node_modules
+COPY --from=node_runtime /app/ai-models ./storage/app/ai-models
+COPY --from=assets /app/public/build ./public/build
+RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views storage/logs storage/app/ai-models bootstrap/cache database/docker \
+ && chown -R www-data:www-data storage bootstrap/cache database \
+ && chmod +x docker/start.sh
+EXPOSE 80
+CMD ["docker/start.sh"]

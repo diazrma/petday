@@ -1,0 +1,157 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../app/Support/*.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji';
+    --font-display: 'Fredoka', 'Nunito', ui-sans-serif, system-ui, sans-serif;
+    --color-brand-50: #fff7ed;
+    --color-brand-100: #ffedd5;
+    --color-brand-200: #fed7aa;
+    --color-brand-300: #fdba74;
+    --color-brand-400: #fb923c;
+    --color-brand-500: #f97316;
+    --color-brand-600: #ea580c;
+    --color-brand-700: #c2410c;
+    --color-ink: #2b2118;
+    --color-cream: #fffaf3;
+    --color-surface: #ffffff;
+    --color-night: #2b2118;
+}
+
+/* Modo escuro: remapeia a paleta inteira, então as telas não precisam de classes dark: */
+.dark {
+    color-scheme: dark;
+    --color-cream: #12100e;
+    --color-surface: #1d1916;
+    --color-ink: #f2ece6;
+    --color-night: #0b0908;
+
+    --color-stone-50: #221e1a;
+    --color-stone-100: #2b2622;
+    --color-stone-200: #3b342e;
+    --color-stone-300: #5a524b;
+    --color-stone-400: #8f8780;
+    --color-stone-500: #aaa39c;
+    --color-stone-600: #c9c2bb;
+    --color-stone-700: #e2dcd5;
+
+    --color-brand-50: #33200f;
+    --color-brand-100: #4a2c14;
+    --color-brand-200: #6b3a15;
+    --color-brand-700: #fdba74;
+
+    --color-sky-50: #0f2634;
+    --color-sky-100: #123246;
+    --color-sky-700: #7dd3fc;
+    --color-sky-800: #bae6fd;
+    --color-emerald-50: #0d2a20;
+    --color-emerald-100: #10372a;
+    --color-emerald-200: #14532d;
+    --color-emerald-700: #6ee7b7;
+    --color-emerald-800: #a7f3d0;
+    --color-rose-50: #34141a;
+    --color-rose-100: #4a1a22;
+    --color-rose-200: #7f1d2d;
+    --color-rose-700: #fda4af;
+    --color-rose-800: #fecdd3;
+    --color-amber-50: #33260b;
+    --color-amber-100: #45320d;
+    --color-amber-700: #fcd34d;
+    --color-amber-800: #fde68a;
+    --color-violet-50: #241a3b;
+    --color-violet-100: #2e2150;
+    --color-violet-700: #c4b5fd;
+    --color-violet-800: #c4b5fd;
+    --color-pink-100: #4a1733;
+    --color-pink-700: #f9a8d4;
+    --color-slate-100: #1e2530;
+    --color-slate-200: #2a3340;
+    --color-slate-700: #cbd5e1;
+}
+
+[x-cloak] { display: none !important; }
+
+/* Painel de boas-vindas (login/cadastro): acompanha o tema com transição suave */
+.hero-panel { background: var(--color-brand-500); transition: background-color .5s ease; }
+.hero-panel * { transition: color .5s ease, background-color .5s ease, fill .5s ease, opacity .5s ease, box-shadow .5s ease; }
+.hero-glow-a { background: rgb(255 255 255 / .12); }
+.hero-glow-b { background: rgb(236 72 153 / .3); }
+.hero-logo { background: #fff; box-shadow: 0 10px 25px -10px rgb(0 0 0 / .35); }
+.hero-accent { color: #2b2118; }
+.hero-muted { color: rgb(255 255 255 / .9); }
+.hero-tile { background: rgb(255 255 255 / .25); }
+.hero-tile-empty { background: rgb(255 255 255 / .1); }
+.hero-paw { fill: rgb(255 255 255 / .6); }
+
+.dark .hero-panel {
+    background:
+        radial-gradient(120% 80% at 100% 0%, rgb(249 115 22 / .28), transparent 55%),
+        radial-gradient(90% 70% at 0% 100%, rgb(236 72 153 / .16), transparent 60%),
+        #17120f;
+}
+.dark .hero-glow-a { background: rgb(249 115 22 / .18); filter: blur(40px); }
+.dark .hero-glow-b { background: rgb(236 72 153 / .12); filter: blur(50px); }
+.dark .hero-logo { background: var(--color-brand-500); box-shadow: 0 10px 30px -8px rgb(249 115 22 / .6); }
+/* mesmo laranja do quadrado do logo */
+.dark .hero-accent { color: var(--color-brand-500); text-shadow: 0 0 24px rgb(249 115 22 / .35); }
+.dark .hero-muted { color: rgb(255 255 255 / .7); }
+.dark .hero-tile { background: rgb(255 255 255 / .06); box-shadow: inset 0 0 0 1px rgb(255 255 255 / .08); }
+.dark .hero-tile-empty { background: rgb(249 115 22 / .08); box-shadow: inset 0 0 0 1px rgb(249 115 22 / .15); }
+.dark .hero-paw { fill: rgb(251 146 60 / .7); }
+
+@utility card { @apply rounded-3xl bg-surface shadow-[0_1px_0_rgba(43,33,24,.04),0_8px_24px_-12px_rgba(43,33,24,.18)] ring-1 ring-orange-900/5 dark:ring-white/5 dark:shadow-none; }
+@utility btn { @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition active:scale-[.97] disabled:opacity-50 cursor-pointer; }
+@utility btn-primary { @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition active:scale-[.97] disabled:opacity-50 cursor-pointer bg-brand-500 text-white shadow-lg shadow-brand-500/30 hover:bg-brand-600; }
+@utility btn-soft { @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition active:scale-[.97] disabled:opacity-50 cursor-pointer bg-brand-50 text-brand-700 hover:bg-brand-100; }
+@utility btn-ghost { @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition active:scale-[.97] disabled:opacity-50 cursor-pointer text-stone-600 hover:bg-stone-100; }
+@utility btn-danger { @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition active:scale-[.97] disabled:opacity-50 cursor-pointer bg-rose-50 text-rose-700 hover:bg-rose-100; }
+@utility input { @apply w-full rounded-2xl border-0 bg-surface px-4 py-3 text-sm text-ink shadow-sm ring-1 ring-stone-300 placeholder:text-stone-400 hover:ring-stone-400 focus:ring-2 focus:ring-brand-400 focus:outline-none; }
+@utility label { @apply mb-1.5 block text-xs font-extrabold uppercase tracking-wide text-stone-500; }
+@utility chip { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold; }
+@utility nav-link {
+    @apply flex items-center gap-3 rounded-2xl px-4 py-3 font-bold text-stone-600 transition hover:bg-brand-50 hover:text-brand-700;
+    &.active { @apply bg-brand-500 text-white shadow-lg shadow-brand-500/30; }
+}
+@utility story-ring { background: conic-gradient(from 180deg, #f97316, #ec4899, #8b5cf6, #f97316); }
+@utility admin-table {
+    & th { @apply px-4 py-3 text-left text-xs font-extrabold uppercase tracking-wide text-stone-500; }
+    & td { @apply px-4 py-3 text-sm; }
+}
+
+@keyframes paw-pop {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.45) rotate(-12deg); }
+    60% { transform: scale(.9) rotate(6deg); }
+    100% { transform: scale(1) rotate(0); }
+}
+@keyframes paw-float {
+    0% { opacity: 1; transform: translate(0, 0) scale(.6); }
+    100% { opacity: 0; transform: translate(var(--dx), -60px) scale(1.2) rotate(var(--r)); }
+}
+.paw-pop { animation: paw-pop .5s cubic-bezier(.3, 1.6, .5, 1); }
+.paw-particle { position: absolute; pointer-events: none; animation: paw-float .9s ease-out forwards; }
+
+/* Rastros */
+@keyframes rastro-rain {
+    0% { opacity: 0; transform: translate(0, 0) scale(.4); }
+    15% { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--sway), -110vh) scale(1.1) rotate(var(--spin)); }
+}
+.rastro-rain { position: absolute; bottom: -40px; animation: rastro-rain 1.8s cubic-bezier(.2, .6, .4, 1) forwards; }
+@keyframes rastro-bubble { from { opacity: 0; transform: translateY(12px) scale(.9); } to { opacity: 1; transform: none; } }
+.rastro-bubble { animation: rastro-bubble .4s cubic-bezier(.3, 1.4, .5, 1) both; }
+@keyframes rastro-float { 0%, 100% { transform: translateY(0) rotate(-4deg); } 50% { transform: translateY(-10px) rotate(4deg); } }
+.rastro-float { animation: rastro-float 3s ease-in-out infinite; }
+@keyframes rastro-enter { from { opacity: 0; transform: translateX(40px) rotate(3deg) scale(.94); } to { opacity: 1; transform: none; } }
+.rastro-enter { animation: rastro-enter .45s cubic-bezier(.22, .9, .25, 1) both; }
+@keyframes rastro-leave { to { opacity: 0; transform: translateX(-60px) rotate(-4deg) scale(.9); } }
+.rastro-leave { animation: rastro-leave .28s ease-in forwards; }
+@keyframes rastro-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+.rastro-pulse { animation: rastro-pulse 1.6s ease-in-out infinite; }

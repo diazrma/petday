@@ -1,0 +1,72 @@
+# Blueprint do Render (plano free). Banco: Neon (Postgres). Fotos: Supabase Storage (S3).
+# Valores com sync: false são pedidos no painel do Render na criação (segredos).
+services:
+  - type: web
+    name: petday
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.prod
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: PetDay
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: APP_LOCALE
+        value: pt_BR
+      - key: APP_FALLBACK_LOCALE
+        value: en
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: warning
+      # Neon: postgresql://usuario:senha@ep-xxx.sa-east-1.aws.neon.tech/neondb?sslmode=require
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        sync: false
+      - key: SESSION_DRIVER
+        value: database
+      - key: SESSION_SECURE_COOKIE
+        value: "true"
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: MAIL_MAILER
+        value: log
+      # Supabase Storage (Project Settings > Storage > S3 Connection), bucket público "petday"
+      - key: PUBLIC_DISK_DRIVER
+        value: s3
+      - key: AWS_BUCKET
+        value: petday
+      - key: AWS_DEFAULT_REGION
+        sync: false
+      - key: AWS_ENDPOINT
+        sync: false
+      - key: AWS_URL
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_USE_PATH_STYLE_ENDPOINT
+        value: "true"
+      - key: PET_AI_CHECK
+        value: "true"
+      - key: PET_AI_ENABLED
+        value: "true"
+      - key: PET_AI_THRESHOLD
+        value: "0.6"
+      - key: PET_AI_FAIL_OPEN
+        value: "false"
+      - key: PET_AI_TIMEOUT
+        value: "120"
+      - key: PET_AI_NODE_BINARY
+        value: /usr/local/bin/node
